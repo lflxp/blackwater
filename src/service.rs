@@ -1,4 +1,4 @@
-use super::*;
+use crate::blackwater::network_operator::*;
 use std::sync::Arc;
 use tokio::net::{TcpStream};
 use tokio::sync::{mpsc, Mutex};
@@ -9,14 +9,7 @@ use stopwatch::{Stopwatch};
 use futures::executor::block_on;
 use oping::{Ping, PingResult};
 
-#[derive(Debug)]
-#[derive(PartialEq)]
-pub enum InputType {
-    IPv4,
-    IPv6,
-    HOSTNAME,
-    UNKNOWN
-}
+use super::{is_valid_length,get_type_of_arg};
 
 static mut IS_LOOPING: bool = true;
 static mut SUCCESS: u32 = 0;
@@ -97,7 +90,7 @@ impl<'a> Core<'a> {
                 register_sig_action();
 
                 for r in args {
-                    match ping(&r).await {
+                    match self.ping(&r).await {
                         Ok(i) => {
                             runByIp(i, ports).await?;
                         },
@@ -110,7 +103,7 @@ impl<'a> Core<'a> {
             _ => {}
         }
         
-        print_result(start).await;
+        self.print_result(start).await;
         Ok(Vec::new())
     }
 
