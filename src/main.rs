@@ -18,6 +18,20 @@ async fn main() -> Result<()> {
         return Ok(());
     }
 
+    match opt.get_ips().await {
+        Ok(data) => {
+            if data.len() == 0 {
+                println!("Parse IP Error");
+                return Ok(());
+            }
+
+            for i in data {
+                println!("push {}", i);
+            }
+        },
+        _ => {}
+    }
+
     let mut core = Core::new(&opt).await;
     core.run(ports).await?;
     Ok(())

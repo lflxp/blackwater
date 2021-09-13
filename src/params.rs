@@ -33,6 +33,65 @@ pub struct Params {
 }
 
 impl Params {
+    pub async fn get_ips(&self) -> Result<Vec<String>> {
+        let ips = self.ip.as_ref().unwrap();
+        // 判断是否存在 - 10.1-244.0.1
+        let idx1 = match ips.find("-") {
+            Some(idx) => idx,
+            None => 0,
+        };
+
+        if idx1 == 0 {
+            return Ok(vec![format!("{}", ips)])
+        }
+
+        let mut a = Vec::new();
+		let mut b = Vec::new();
+		let mut c = Vec::new();
+		let mut d = Vec::new();
+
+        let tmp: Vec<&str> = ips.split(".").collect();
+        for (index,n) in tmp.iter().enumerate() {
+            if index == 0 {
+				a = self.strtoi32(n);
+			} else if index == 1 {
+				b = self.strtoi32(n)
+			} else if index == 2 {
+				c = self.strtoi32(n)
+			} else if index == 3 {
+				d = self.strtoi32(n)
+			}
+        }
+
+        let data = &mut Vec::new();
+        for x in a.clone() {
+            for y in b.clone() {
+                for z in c.clone() {
+                    for g in d.clone() {
+                        data.push(format!("{}.{}.{}.{}",x,y,z,g))
+                    }
+                }
+            }
+        }
+            
+        Ok(data.to_vec())
+    }
+
+    // 1-3 -> [1,2,3]
+    fn strtoi32(&self, input: &str) -> Vec<i32> {
+        let mut v = Vec::new();
+		if input.contains("-") {
+			// Vec<str> -> Vec<i32> -> for x in a..b
+			let tmp:Vec<i32> = input.split("-").map(|x| x.parse::<i32>().unwrap()).collect();
+			for x in tmp[0]..tmp[1] {
+				v.push(x);
+			}
+		} else {
+			v.push(input.parse::<i32>().unwrap());
+		}
+		v
+    }
+
     pub async fn get_ports(&self) -> Result<Vec<String>> {
         let idx1 = match self.port.find("-") {
             Some(idx) => idx,
