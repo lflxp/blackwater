@@ -9,6 +9,9 @@ edition = "2018"
 [dependencies]
 tokio = { version = "1.8.3", features = ["full"] }
 structopt = "0.3.21"
+futures = "0.3.4"
+oping = "0.3.3"
+stopwatch= "0.0.7"
 
 [profile.release]
 opt-level = 3

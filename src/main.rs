@@ -1,10 +1,13 @@
 use blackwater::*;
 use structopt::StructOpt;
-use std::sync::Arc;
+use stopwatch::{Stopwatch};
+
+mod ping;
+use ping::{pingmethod, print_result};
 
 #[tokio::main]
 async fn main() -> Result<()> {
-    let mut opt: Params = Params::from_args();
+    let opt: Params = Params::from_args();
     println!("{}", LOGO);
     if opt.ip == None {
         println!("Please -h");
@@ -39,18 +42,26 @@ async fn main() -> Result<()> {
         return Ok(());
     }
 
-    let mut core = Core::new(&opt).await;
-    for (index,ip) in ips.iter().enumerate() {
-        println!("Index {} IP {} scanning", index, ip);
-        match core.runasip(ports.clone(), ip.to_string()).await {
-            Ok(_s) => {
-                println!("Ip success");
-            },
-            _ => {}
-        };
-    }
-    
+    let start = Stopwatch::start_new();
 
+    // ping ip 获取有效ip
+    match pingmethod(ips).await {
+        Ok(data) => {
+            let mut core = Core::new(&opt).await;
+            for (index,ip) in data.iter().enumerate() {
+                println!("Index {} IP {} scanning", index, ip);
+                match core.runasip(ports.clone(), ip.to_string()).await {
+                    Ok(_s) => {
+                        println!("Ip success");
+                    },
+                    _ => {}
+                };
+            }
+        }
+        Err(e) => println!("{}", e),
+    }
+
+    print_result(start).await;
 
     // opt.ip = Option::from(ips[0].to_string());
 
