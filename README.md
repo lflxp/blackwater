@@ -1,5 +1,7 @@
 # blackwater
-Blaskwate rust port scanner tool
+Blaskwate rust tool for: 
+1. port scanner
+2. ip range ping
 
 Scan all ports in one second, basically no missing
 ### Install
@@ -24,7 +26,7 @@ FLAGS:
 
 OPTIONS:
     -c, --concurrency <concurrency>    Number of concurrent scans [default: 65535]
-    -i, --ip <ip>                      Scanned IP address
+    -i, --ip <ip>                      Scanned IP Range address eg: 127.0.0.1-255 
     -f, --outfile <outfile>            Result output file address
     -p, --port <port>                  Port Range <port,port,port> or <port-port> [default:
                                        21,22,23,25,69,79,80,88,110,113,119,220,443,1433,1521,2082,2083,2086,2087,2095,2096,2077,2078,3306,3389,5432,6379,8080,9000,9001,9200,9300,11211,27017]
@@ -34,31 +36,43 @@ OPTIONS:
 ### speed
 Amazing speed Not a single port is missed
 ``` 
-ubuntu@ubuntu:~/$ time blackwater -i 110.242.68.3 -p1-65535
+➜  38202 blackwater -i 172.20.176.1-10 -p1-65535
 
- ▄▄▄▄    ██▓     ▄▄▄       ▄████▄   ██ ▄█▀ █     █░ ▄▄▄      ▄▄▄█████▓▓█████  ██▀███  
+ ▄▄▄▄    ██▓     ▄▄▄       ▄████▄   ██ ▄█▀ █     █░ ▄▄▄      ▄▄▄█████▓▓█████  ██▀███
 ▓█████▄ ▓██▒    ▒████▄    ▒██▀ ▀█   ██▄█▒ ▓█░ █ ░█░▒████▄    ▓  ██▒ ▓▒▓█   ▀ ▓██ ▒ ██▒
 ▒██▒ ▄██▒██░    ▒██  ▀█▄  ▒▓█    ▄ ▓███▄░ ▒█░ █ ░█ ▒██  ▀█▄  ▒ ▓██░ ▒░▒███   ▓██ ░▄█ ▒
-▒██░█▀  ▒██░    ░██▄▄▄▄██ ▒▓▓▄ ▄██▒▓██ █▄ ░█░ █ ░█ ░██▄▄▄▄██ ░ ▓██▓ ░ ▒▓█  ▄ ▒██▀▀█▄  
+▒██░█▀  ▒██░    ░██▄▄▄▄██ ▒▓▓▄ ▄██▒▓██ █▄ ░█░ █ ░█ ░██▄▄▄▄██ ░ ▓██▓ ░ ▒▓█  ▄ ▒██▀▀█▄
 ░▓█  ▀█▓░██████▒ ▓█   ▓██▒▒ ▓███▀ ░▒██▒ █▄░░██▒██▓  ▓█   ▓██▒  ▒██▒ ░ ░▒████▒░██▓ ▒██▒
 ░▒▓███▀▒░ ▒░▓  ░ ▒▒   ▓▒█░░ ░▒ ▒  ░▒ ▒▒ ▓▒░ ▓░▒ ▒   ▒▒   ▓▒█░  ▒ ░░   ░░ ▒░ ░░ ▒▓ ░▒▓░
 ▒░▒   ░ ░ ░ ▒  ░  ▒   ▒▒ ░  ░  ▒   ░ ░▒ ▒░  ▒ ░ ░    ▒   ▒▒ ░    ░     ░ ░  ░  ░▒ ░ ▒░
- ░    ░   ░ ░     ░   ▒   ░        ░ ░░ ░   ░   ░    ░   ▒     ░         ░     ░░   ░ 
- ░          ░  ░      ░  ░░ ░      ░  ░       ░          ░  ░            ░  ░   ░     
-      ░                   ░                                                           
+ ░    ░   ░ ░     ░   ▒   ░        ░ ░░ ░   ░   ░    ░   ▒     ░         ░     ░░   ░
+ ░          ░  ░      ░  ░░ ░      ░  ░       ░          ░  ░            ░  ░   ░
+      ░                   ░
 
-Black Water
+Black Water v1.0.1
 Asynchronous Port Scanner written in rust
-https://github.com/dollarkillerx/blackwater
+https://github.com/lflxp/blackwater
 
-110.242.68.3:80
-110.242.68.3:443
-110.242.68.3:2000
-110.242.68.3:5060
-
-real    0m1.637s
-user    0m1.196s
-sys     0m1.672s
+Response from host 172.20.176.1 (address 172.20.176.1): latency 0.281 ms
+No response from host 172.20.176.2 (loss)
+No response from host 172.20.176.3 (loss)
+No response from host 172.20.176.4 (loss)
+No response from host 172.20.176.5 (loss)
+No response from host 172.20.176.6 (loss)
+No response from host 172.20.176.7 (loss)
+No response from host 172.20.176.8 (loss)
+No response from host 172.20.176.9 (loss)
+Index 0 IP 172.20.176.1 scanning
+172.20.176.1:139
+172.20.176.1:135
+172.20.176.1:445
+Ip success
+--- Ping result ---
+TOTAL  : 9 packets
+SUCCESS: 1
+FAILURE: 8
+TIME   : 0.031 ms
+Times: 1018.000 ms
 
 ubuntu@ubuntu:~/$ time ./blackwater -i www.baidu.com -p1-65535
  
