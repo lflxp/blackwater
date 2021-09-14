@@ -16,6 +16,53 @@ impl<'a> Core<'a> {
         }
     }
 
+    pub async fn runasip(&mut self, ports: Vec<String>,ips: String) -> Result<()> {
+        let (sen_file, rec_file) = mpsc::unbounded_channel();
+        // let mut output = Arc::new(Output::new(rec_file, self.param.outfile.clone()));
+        let mut output = Output::new(rec_file, self.param.outfile.clone());
+
+        // run output
+        tokio::spawn(async move {
+            output.run().await;
+        });
+
+        // Concurrency Control
+        let (sen_limit, rec_limit) = mpsc::channel(self.param.concurrency as usize);
+        let rec_limit = Arc::new(Mutex::new(rec_limit));
+        let wg = Arc::new(WaitGroup::new().await);
+        // let ip = self.param.ip.as_ref().unwrap();
+        let mut timeout = self.param.timeout;
+        if timeout == 0 {
+            timeout = 800
+        }
+
+        for port in ports {
+            sen_limit.send(1).await.unwrap();
+            wg.add().await;
+
+            let wg = wg.clone();
+            let rec_limit = rec_limit.clone();
+            let sen_file = sen_file.clone();
+            let ip = ips.clone();
+            tokio::spawn(async move {
+                match Self::blasting(format!("{}:{}", ip, port), timeout).await {
+                    Ok(data) => {
+                        sen_file.send(data).unwrap();
+                        // sen_file.send(data).await.unwrap();
+                    }
+                    _ => {}
+                }
+                wg.done().await;
+
+                rec_limit.lock().await.recv().await.unwrap();
+            });
+        }
+
+        wg.wait().await;
+
+        Ok(())
+    }
+
     pub async fn run(&mut self, ports: Vec<String>) -> Result<()> {
         let (sen_file, rec_file) = mpsc::unbounded_channel();
         // let mut output = Arc::new(Output::new(rec_file, self.param.outfile.clone()));
