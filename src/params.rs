@@ -5,9 +5,9 @@ use structopt::StructOpt;
 use super::*;
 
 #[derive(StructOpt, Debug, Clone)]
-#[structopt(name = "blackwater", about = "Asynchronous Port Scanner written in rust  https://github.com/dollarkillerx/blackwater")]
+#[structopt(name = "blackwater", about = "Asynchronous Port Scanner written in rust  https://github.com/lflxp/blackwater")]
 pub struct Params {
-    /// Scanned IP address
+    /// Scanned IP Range address eg: 127.0.0.1-255
     #[structopt(short = "i", long = "ip")]
     pub ip: Option<String>,
 
