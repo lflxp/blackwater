@@ -5,12 +5,18 @@ use stopwatch::{Stopwatch};
 mod ping;
 use ping::{pingmethod, print_result};
 
+use log::{error, info, warn, debug};
+use log4rs;
+
 #[tokio::main]
 async fn main() -> Result<()> {
+    log4rs::init_file("log4rs.yaml", Default::default()).unwrap();
+    info!("Starting Scan!!!");
+
     let opt: Params = Params::from_args();
     println!("{}", LOGO);
     if opt.ip == None {
-        println!("Please -h");
+        warn!("Please -h");
         return Ok(());
     }
 
@@ -18,7 +24,7 @@ async fn main() -> Result<()> {
 
     let ports = opt.get_ports().await?;
     if ports.len() == 0 {
-        println!("Parameter Error");
+        error!("Parameter Error");
         return Ok(());
     }
 
@@ -38,7 +44,7 @@ async fn main() -> Result<()> {
 
     let ips = opt.get_ips().await?;
     if ips.len() == 0 {
-        println!("IPS Len Error");
+        error!("IPS Len Error");
         return Ok(());
     }
 
@@ -49,16 +55,16 @@ async fn main() -> Result<()> {
         Ok(data) => {
             let mut core = Core::new(&opt).await;
             for (index,ip) in data.iter().enumerate() {
-                println!("Index {} IP {} scanning", index, ip);
+                warn!("Index {} IP {} scanning", index, ip);
                 match core.runasip(ports.clone(), ip.to_string()).await {
                     Ok(_s) => {
-                        println!("Ip success");
+                        debug!("Ip success");
                     },
                     _ => {}
                 };
             }
         }
-        Err(e) => println!("{}", e),
+        Err(e) => error!("{}", e),
     }
 
     print_result(start).await;

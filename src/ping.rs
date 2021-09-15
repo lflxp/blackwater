@@ -1,5 +1,6 @@
 use stopwatch::{Stopwatch};
 use oping::{Ping, PingResult};
+use log::{error, info, warn};
 
 // static mut IS_LOOPING: bool = true;
 static mut SUCCESS: u32 = 0;
@@ -18,7 +19,7 @@ pub async fn pingmethod(addr: Vec<String>) -> PingResult<Vec<String>> {
     match ping.set_timeout(0.1) {
         Ok(_) => {},
         Err(e) => {
-            println!("{}", e);
+            error!("{}", e);
         }
     };
 
@@ -26,7 +27,7 @@ pub async fn pingmethod(addr: Vec<String>) -> PingResult<Vec<String>> {
     for host in addr {
         match ping.add_host(&host) {
             Ok(_) => {},
-            Err(e) => println!("{:?}",e)
+            Err(e) => error!("{:?}",e)
         }
     }       
 
@@ -37,11 +38,11 @@ pub async fn pingmethod(addr: Vec<String>) -> PingResult<Vec<String>> {
         // check response and update result
         for response in responses {
             if response.dropped > 0 {
-                println!("No response from host {} (loss)", response.address);
+                warn!("No response from host {} (loss)", response.address);
                 FAILURE += 1;
             } else {
                 // display success result
-                println!("Response from host {} (address {}): latency {} ms", response.hostname, response.address, response.latency_ms);
+                info!("Response from host {} (address {}): latency {} ms", response.hostname, response.address, response.latency_ms);
                 SUCCESS += 1;
                 TIME += response.latency_ms;
                 list.push(response.address.to_string());
@@ -59,11 +60,11 @@ pub async fn pingmethod(addr: Vec<String>) -> PingResult<Vec<String>> {
 pub async fn print_result(tt: Stopwatch) {
     println!("--- Ping result ---");
     unsafe {
-        println!("TOTAL  : {} packets", SUCCESS + FAILURE);
-        println!("SUCCESS: {}", SUCCESS);
-        println!("FAILURE: {}", FAILURE);
+        info!("TOTAL  : {} packets", SUCCESS + FAILURE);
+        info!("SUCCESS: {}", SUCCESS);
+        info!("FAILURE: {}", FAILURE);
         // safe casting using keyword as
-        println!("TIME   : {:.3} ms", TIME / (SUCCESS + FAILURE) as f64);
-        println!("Times: {:.3} ms", tt.elapsed_ms() as f64)
+        info!("TIME   : {:.3} ms", TIME / (SUCCESS + FAILURE) as f64);
+        info!("Times: {:.3} ms", tt.elapsed_ms() as f64)
     }
 }

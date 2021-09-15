@@ -2,6 +2,7 @@ use tokio::fs::File;
 use std::path::PathBuf;
 use tokio::io::AsyncWriteExt;
 use tokio::sync::mpsc::UnboundedReceiver;
+use log::{info};
 
 pub struct Output {
     rec: UnboundedReceiver<String>,
@@ -33,10 +34,10 @@ impl Output {
                 Some(r) => {
                     match output {
                         None => {
-                            println!("{}", r);
+                            info!("{}", r);
                         }
                         Some(_) => {
-                            println!("{}", r);
+                            info!("{}", r);
                             let r = format!("{} \n", r);
                             output.as_mut().unwrap().write_all(r.as_bytes()).await.unwrap();
                             output.as_mut().unwrap().flush().await.unwrap();

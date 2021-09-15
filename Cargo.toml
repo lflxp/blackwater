@@ -12,6 +12,8 @@ structopt = "0.3.21"
 futures = "0.3.4"
 oping = "0.3.3"
 stopwatch= "0.0.7"
+log = "0.4.8"
+log4rs = "0.10.0"
 
 [profile.release]
 opt-level = 3

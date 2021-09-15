@@ -11,3 +11,4 @@ Cargo.lock
 .idea
 
 tokio_test/target
+log/
